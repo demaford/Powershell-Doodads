@@ -1,0 +1,38 @@
+{
+	"folders": [
+		{
+			"name": "PS Doodads",
+			"path": "."
+		}
+	],
+	"settings": {
+		"workbench.iconTheme": "material-icon-theme",
+		"editor.formatOnSave": true,
+		"cSpell.words": [
+			"Decryptor",
+			"dism",
+			"ehuffman",
+			"FQDNs",
+			"Hashtable",
+			"HKEY",
+			"HKLM",
+			"Interop",
+			"Intune",
+			"MAPI",
+			"reimage",
+			"SMTP",
+			"Unmanaged",
+			"WESL",
+			"Winver"
+		],
+		"powershell.sideBar.CommandExplorerVisibility": true
+	},
+	"extensions": {
+		"recommendations": [
+			"PKief.material-icon-theme",
+			"streetsidesoftware.code-spell-checker",
+			"ms-vscode.powershell",
+			"FanaticPythoner.better-todo-tree"
+		]
+	}
+}
