@@ -25,7 +25,16 @@
 			"WESL",
 			"Winver"
 		],
-		"powershell.sideBar.CommandExplorerVisibility": true
+		"powershell.sideBar.CommandExplorerVisibility": true,
+		"powershell.codeFormatting.autoCorrectAliases": true,
+		"powershell.codeFormatting.avoidSemicolonsAsLineTerminators": true,
+		"powershell.codeFormatting.useCorrectCasing": true,
+		"powershell.codeFormatting.useConstantStrings": true,
+		"powershell.codeFormatting.trimWhitespaceAroundPipe": true,
+		"powershell.codeFormatting.preset": "OTBS",
+		"powershell.codeFormatting.pipelineIndentationStyle": "IncreaseIndentationAfterEveryPipeline",
+		"powershell.codeFormatting.whitespaceBetweenParameters": true,
+		"powershell.pester.useLegacyCodeLens": false
 	},
 	"extensions": {
 		"recommendations": [
