@@ -26,7 +26,7 @@ param(
     [Parameter(
         Mandatory = $false,
         Position = 0,
-        HelpMessage = "Days before expiration to display the popup"
+        HelpMessage = 'Days before expiration to display the popup'
     )]
     [ValidateNotNullOrEmpty()]
     [System.Int32]$PopupDaysBeforeCount = 14,
@@ -34,7 +34,7 @@ param(
     [Parameter(
         Mandatory = $false,
         Position = 1,
-        HelpMessage = "Text to display in the form body"
+        HelpMessage = 'Text to display in the form body'
     )]
     [ValidateNotNullOrEmpty()]
     [String]$MessageBody = "Your password is about to expire.`nPlease consider changing it.",
@@ -42,30 +42,30 @@ param(
     [Parameter(
         Mandatory = $false,
         Position = 2,
-        HelpMessage = "Title Bar text to display"
+        HelpMessage = 'Title Bar text to display'
     )]
     [ValidateNotNullOrEmpty()]
-    [String]$TitleBarText = "Title Bar Text",
+    [String]$TitleBarText = 'Title Bar Text',
     # Select the icon to be displayed by the message box
     [Parameter(
         Mandatory = $false,
         Position = 3,
-        HelpMessage = "Select the icon to be displayed by the message box"
+        HelpMessage = 'Select the icon to be displayed by the message box'
     )]
-    [ValidateSet("Information", "Question", "Warning", "Error")]
-    [String]$MessageBoxIcon = "Information",
+    [ValidateSet('Information', 'Question', 'Warning', 'Error')]
+    [String]$MessageBoxIcon = 'Information',
     # Manual input of the expiration date
     [Parameter(
         Mandatory = $false,
         Position = 4,
-        HelpMessage = "Specify the expiration date of the password"
+        HelpMessage = 'Specify the expiration date of the password'
     )]
     [ValidateNotNullOrEmpty()]
-    [System.DateTime]$PasswordExpirationDate = (&"..\..\Libraries\AD DS\LDAP\Get-PasswordExpiration.ps1" -CLIMode)
+    [System.DateTime]$PasswordExpirationDate = (&'..\..\Libraries\AD DS\LDAP\Get-PasswordExpiration.ps1' -CLIMode)
 )
 
 # Define the popup function
-Function Show-Popup {
+function Show-Popup {
     <#
     .SYNOPSIS
         Displays a popup with the specified text and icon

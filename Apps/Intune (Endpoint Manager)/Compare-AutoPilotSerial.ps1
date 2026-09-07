@@ -31,20 +31,20 @@
 
 param(
     [ValidateScript({
-        Test-Path -Path $_ -PathType "Leaf"
-    })]
+            Test-Path -Path $_ -PathType 'Leaf'
+        })]
     [ValidateNotNullOrEmpty()]
     [System.String[]]$OldHash,
     [ValidateScript({
-        Test-Path -Path $_ -PathType "Leaf"
-    })]
+            Test-Path -Path $_ -PathType 'Leaf'
+        })]
     [ValidateNotNullOrEmpty()]
     [System.String[]]$NewHash,
     [ValidateScript({
-        Test-Path -Path $_ -PathType "Container"
-    })]
+            Test-Path -Path $_ -PathType 'Container'
+        })]
     [ValidateNotNullOrEmpty()]
-    [System.String]$ExportPath = ".\"
+    [System.String]$ExportPath = '.\'
 )
 
 # Initialize variables
@@ -52,11 +52,11 @@ $HashListOld = @()
 $HashListNew = @()
 
 # Merge all hash lists together as a single list to process for all old and new hashes
-foreach ($CSVPath in $OldHash) {$HashListOld += Import-Csv -Path $CSVPath}
-foreach ($CSVPath in $NewHash) {$HashListNew += Import-Csv -Path $CSVPath}
+foreach ($CSVPath in $OldHash) { $HashListOld += Import-Csv -Path $CSVPath }
+foreach ($CSVPath in $NewHash) { $HashListNew += Import-Csv -Path $CSVPath }
 
 # Compare the two objects
-$Results = Compare-Object -ReferenceObject $HashListOld -DifferenceObject $HashListNew -Property "Device Serial Number"
+$Results = Compare-Object -ReferenceObject $HashListOld -DifferenceObject $HashListNew -Property 'Device Serial Number'
 
 # Write the output to a file for later consumption of the resulting data.
 $Results | Out-File -FilePath "$ExportPath\Comparison Results.txt"

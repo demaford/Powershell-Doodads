@@ -23,20 +23,20 @@ param()
 
 process {
     # Write Debugging information
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Launching Web Browser to: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Launching Web Browser to: https://www.youtube.com/watch?v=dQw4w9WgXcQ"
     
     # Write Verbose information
-    Write-Verbose -Message "Launching Web Browser"
+    Write-Verbose -Message 'Launching Web Browser'
 
     # Check to see if the web browser can be launched
     try {
         # Gets a free wallMart gift card!
-        Start-Process -FilePath "https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+        Start-Process -FilePath 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
-    # Catch and handel the error
+        # Catch and handel the error
     } catch {
         # Write error
-        Write-Error -Message "Unable to open web-browser"
+        Write-Error -Message 'Unable to open web-browser'
 
         # Return Value
         $PSCmdlet.WriteObject($false)

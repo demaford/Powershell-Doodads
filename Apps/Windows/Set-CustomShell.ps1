@@ -41,20 +41,20 @@
 #Requires -RunAsAdministrator
 
 param (
-    [System.String]$ComputerName = "localhost",
+    [System.String]$ComputerName = 'localhost',
     [System.String]$User = $env:USERNAME,
     [Parameter(
         Mandatory = $false,
         Position = 2
     )]
-    [ValidateSet("Restart Application", "Restart Computer", "Shutdown Computer", "Do Nothing")]
-    [System.String]$ShellAction = "Do Nothing"
+    [ValidateSet('Restart Application', 'Restart Computer', 'Shutdown Computer', 'Do Nothing')]
+    [System.String]$ShellAction = 'Do Nothing'
 )
 
-Begin {
+begin {
     # Check to see if the required Edition of Windows 10 is present.
     # If not, stop execution of the script.
-    if ((Get-WindowsEdition -Online).Edition -NotIn "Enterprise", "Education") {
+    if ((Get-WindowsEdition -Online).Edition -notin 'Enterprise', 'Education') {
 
         # Write error to console
         Write-Error "This device doesn't have required license to use Custom Shell"
@@ -64,25 +64,25 @@ Begin {
     }
 
     # Checks the user selected shell action and set the action number to the appropriate integer
-    Switch ($ShellAction) {
-        "Restart Application" { [Int32]$ShellActionNumber = 0 ; break }
-        "Restart Computer" { [Int32]$ShellActionNumber = 1 ; break }
-        "Shutdown Computer" { [Int32]$ShellActionNumber = 2 ; break }
-        "Do Nothing" { [Int32]$ShellActionNumber = 3 ; break }
-        Default { [Int32]$ShellActionNumber = 3 }
+    switch ($ShellAction) {
+        'Restart Application' { [Int32]$ShellActionNumber = 0 ; break }
+        'Restart Computer' { [Int32]$ShellActionNumber = 1 ; break }
+        'Shutdown Computer' { [Int32]$ShellActionNumber = 2 ; break }
+        'Do Nothing' { [Int32]$ShellActionNumber = 3 ; break }
+        default { [Int32]$ShellActionNumber = 3 }
     }
 
     # This well-known security identifier (SID) corresponds to the BUILTIN\Administrators group.
-    $AdminSID = "S-1-5-32-544"
+    $AdminSID = 'S-1-5-32-544'
 
     # Create a script block that can enabled the custom shell launcher on a system.
     [System.Management.Automation.ScriptBlock]$Script_EnableShellLauncher = {
         # Sets up the shell launcher feature on the remote computer
-        Enable-WindowsOptionalFeature -Online -FeatureName "Client-EmbeddedShellLauncher" -NoRestart
+        Enable-WindowsOptionalFeature -Online -FeatureName 'Client-EmbeddedShellLauncher' -NoRestart
     }
 
     # Create a function to retrieve the SID for a user account on a machine. Works with domain accounts.
-    Function Get-UserSID {
+    function Get-UserSID {
         <#
         .SYNOPSIS
             Converts a username to a SID
@@ -116,12 +116,12 @@ Begin {
         )
 
         # Set up the required variable
-        Begin {
+        begin {
             $AccountArray = @()
         }
 
         # Convert the username to SID
-        Process {
+        process {
             foreach ($User in $Account) {
                 # Convert the NT Account context to a SID object
                 [System.Security.Principal.SecurityIdentifier]$UserSID = $User.Translate([System.Security.Principal.SecurityIdentifier])
@@ -132,16 +132,16 @@ Begin {
         }
 
         # Return the results
-        End {
-            Return $AccountArray
+        end {
+            return $AccountArray
         }
     }
 }
 
-Process {
+process {
     # If the script is being executed locally, execute the scriptblock locally without invoking WinRM systems.
     # Otherwise use WinRM to execute the optional feature installation.
-    if (($ComputerName -eq "localhost") -or ($ComputerName -match "127.[0-9]*.[0-9]*.[0-9]*")) {
+    if (($ComputerName -eq 'localhost') -or ($ComputerName -match '127.[0-9]*.[0-9]*.[0-9]*')) {
         & $Script_EnableShellLauncher
     } else {
         Invoke-Command -ComputerName $ComputerName -ScriptBlock $Script_EnableShellLauncher
@@ -152,10 +152,9 @@ Process {
     try {
         $ShellLauncherClass = [WMIClass]"\\$ComputerName\root\standardCIMv2\embedded:WESL_UserSetting"
         # Get-CimClass -Namespace "root\standardCIMv2/embedded" -ClassName "WESL_UserSetting"
-    }
-    catch [Exception] {
-        Write-Error $_.Exception.Message;
-        Write-Error "Make sure Shell Launcher feature is enabled"
+    } catch [Exception] {
+        Write-Error $_.Exception.Message
+        Write-Error 'Make sure Shell Launcher feature is enabled'
         exit 2
     }
 
@@ -163,20 +162,20 @@ Process {
     $TargetUserSID = Get-UsernameSID -Account $User
 
     # Sets the default shell for Windows to explorer and to do nothing if it is closed (this is the default behavior of windows)
-    $ShellLauncherClass.SetDefaultShell("explorer.exe", 3)
+    $ShellLauncherClass.SetDefaultShell('explorer.exe', 3)
 
     # Create launch script
-    Set-Content -Path "C:\Start-CustomShellApplication.ps1" -Value 'Start-Process -FilePath "C:\Path\To\File"'
+    Set-Content -Path 'C:\Start-CustomShellApplication.ps1' -Value 'Start-Process -FilePath "C:\Path\To\File"'
 
     # Remove current custom shell settings to allow new settings to be applied if settings already exist
     $ShellLauncherClass.removeCustomShell($TargetUserSID) | Out-Null
     $ShellLauncherClass.removeCustomShell($AdminSID) | Out-Null
 
     # Set Internet Explorer as the shell for "Cashier", and restart the machine if Internet Explorer is closed.
-    $ShellLauncherClass.SetCustomShell($TargetUserSID, "PowerShell -WindowStyle Hidden -File C:\Start-CustomShellApplication.ps1", ($null), ($null), $ShellActionNumber)
+    $ShellLauncherClass.SetCustomShell($TargetUserSID, 'PowerShell -WindowStyle Hidden -File C:\Start-CustomShellApplication.ps1', ($null), ($null), $ShellActionNumber)
 
     # Set Explorer as the shell for administrators.
-    $ShellLauncherClass.SetCustomShell($AdminSID, "explorer.exe")
+    $ShellLauncherClass.SetCustomShell($AdminSID, 'explorer.exe')
 
     # Enable Shell Launcher
     $ShellLauncherClass.SetEnabled($TRUE)

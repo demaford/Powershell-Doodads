@@ -44,33 +44,33 @@ param (
     [Parameter(
         Mandatory = $true,
         Position = 0,
-        ParameterSetName = "CLI",
+        ParameterSetName = 'CLI',
         ValueFromPipeline = $true,
         ValueFromPipelineByPropertyName = $true
     )]
-    [Alias("PSPath", "SourceCSVPath")]
+    [Alias('PSPath', 'SourceCSVPath')]
     [ValidateNotNullOrEmpty()]
-    [ValidateScript( { Test-Path -Path $_ -PathType "Leaf" -Include "*.csv" })]
+    [ValidateScript( { Test-Path -Path $_ -PathType 'Leaf' -Include '*.csv' })]
     [System.String]$Source,
     [Parameter(
         Mandatory = $true,
         Position = 1,
-        ParameterSetName = "CLI",
+        ParameterSetName = 'CLI',
         ValueFromPipeline = $true,
         ValueFromPipelineByPropertyName = $true
     )]
-    [Alias("DestinationCSVPath")]
+    [Alias('DestinationCSVPath')]
     [ValidateNotNullOrEmpty()]
-    [ValidateScript( { Test-Path -Path $_ -PathType "Leaf" -Include "*.csv" })]
+    [ValidateScript( { Test-Path -Path $_ -PathType 'Leaf' -Include '*.csv' })]
     [System.String]$Destination,
     [Parameter(
         Mandatory = $true,
         Position = 2,
-        ParameterSetName = "CLI",
+        ParameterSetName = 'CLI',
         ValueFromPipeline = $true,
         ValueFromPipelineByPropertyName = $true
     )]
-    [Alias("Property", "Name")]
+    [Alias('Property', 'Name')]
     [ValidateNotNullOrEmpty()]
     [System.String]$ColumnName
 )
@@ -79,32 +79,32 @@ param (
 if ($PSBoundParameters.Debug) { $DebugPreference = 'Continue' }
 
 # Write debugging info
-Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Parameter info:"
-Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$Source: $Source"
-Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$Destination: $Destination"
-Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$ColumnName: $ColumnName"
+Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Parameter info:"
+Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$Source: $Source"
+Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$Destination: $Destination"
+Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$ColumnName: $ColumnName"
 
 # Import the CSV files into memory.
 $SourceCSV = Import-Csv -Path $Source
 $DestinationCSV = Import-Csv -Path $Destination
 
 # Write debugging info
-Write-Debug -Message "============================ Source CSV First Two Rows ============================"
+Write-Debug -Message '============================ Source CSV First Two Rows ============================'
 # Write the first two rows to the debug output if debug mode is specified
-$SourceCSV | Select-Object -First 2 | ForEach-Object -Process {Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - $_"}
-Write-Debug -Message "============================ Destination CSV First Two Rows ======================="
-$DestinationCSV | Select-Object -First 2 | ForEach-Object -Process { Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - $_"}
+$SourceCSV | Select-Object -First 2 | ForEach-Object -Process { Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - $_" }
+Write-Debug -Message '============================ Destination CSV First Two Rows ======================='
+$DestinationCSV | Select-Object -First 2 | ForEach-Object -Process { Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - $_" }
 
 # If the source doesn't have the specified column or the destination already has it, write an error, return and exit.
 if ($null -eq $SourceCSV[0].$ColumnName) {
 
     # Write debugging info
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Failure occurred, variable data at if statement:"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$SourceCSV[0].`$ColumnName: $($SourceCSV[0].$ColumnName)"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - The above debug statement won't have a value if the source does not exist"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Failure occurred, variable data at if statement:"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$SourceCSV[0].`$ColumnName: $($SourceCSV[0].$ColumnName)"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - The above debug statement won't have a value if the source does not exist"
 
     # Write an error message to stderr (this is non-terminating)
-    Write-Error -Message "The source column does not exist!"
+    Write-Error -Message 'The source column does not exist!'
 
     # Return $False for a failed copy
     $PSCmdlet.WriteObject($false)
@@ -114,12 +114,12 @@ if ($null -eq $SourceCSV[0].$ColumnName) {
 } elseif ($null -ne $DestinationCSV[0].$ColumnName) {
 
     # Write debugging info
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Failure occurred, variable data at if statement:"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$DestinationCSV[0].`$ColumnName: $($DestinationCSV[0].$ColumnName)"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Column data type: $($DestinationCSV[0].$ColumnName.GetType().FullName)"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Failure occurred, variable data at if statement:"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$DestinationCSV[0].`$ColumnName: $($DestinationCSV[0].$ColumnName)"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Column data type: $($DestinationCSV[0].$ColumnName.GetType().FullName)"
 
     # Write an error message to stderr (this is non-terminating)
-    Write-Error -Message "The column already exists in the destination!"
+    Write-Error -Message 'The column already exists in the destination!'
 
     # Return $False for a failed copy
     $PSCmdlet.WriteObject($false)
@@ -134,28 +134,28 @@ if ($SourceCSV.Count -gt $DestinationCSV.Count) {
     $Headers = $DestinationCSV[0].PSObject.Properties.Name
 
     # Write verbose information
-    Write-Verbose -Message "Creating new rows for destination CSV file"
+    Write-Verbose -Message 'Creating new rows for destination CSV file'
 
     # Write debugging info
-    Write-Debug -Message "============================ Header list =========================================="
-    $Headers | ForEach-Object -Process { Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - $_"}
+    Write-Debug -Message '============================ Header list =========================================='
+    $Headers | ForEach-Object -Process { Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - $_" }
 }
 
 # Write debugging info
-Write-Debug -Message "============================ Column Copy started =================================="
+Write-Debug -Message '============================ Column Copy started =================================='
 
 # Loop through the source CSV file
 for ($i = 0; $i -lt $SourceCSV.Count; $i++) {
     # If the destination CSV file doesn't have any more rows, create new rows
     if ($null -ne $DestinationCSV[$i]) {
         # Write debug info
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Adding data to existing row [$i]: $($SourceCSV[$i].$ColumnName) "
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Adding data to existing row [$i]: $($SourceCSV[$i].$ColumnName) "
 
         # Add the column and date to the destination CSV file
-        $DestinationCSV[$i] | Add-Member -MemberType "NoteProperty" -Name $ColumnName -Value $SourceCSV[$i].$ColumnName
+        $DestinationCSV[$i] | Add-Member -MemberType 'NoteProperty' -Name $ColumnName -Value $SourceCSV[$i].$ColumnName
     } else {
         # Write debug info
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Creating new row [$i]"
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Creating new row [$i]"
 
         # The reason that the HashTable is not created fresh in each loop is that only the one column of data is updated.
         # It is updated *every* time to the value of the source file, so if it is blank, it will be blank, it will not be the previous value.
@@ -166,17 +166,17 @@ for ($i = 0; $i -lt $SourceCSV.Count; $i++) {
         # Loop through the list of headers and make a table of them
         foreach ($Header in $Headers) {
             # Set each column of data to blank for the additional rows
-            $HeaderHashTable[$Header] = ""
+            $HeaderHashTable[$Header] = ''
         }
 
         # Add the new column to the Header HashTable
-        $HeaderHashTable[$ColumnName] = ""
+        $HeaderHashTable[$ColumnName] = ''
 
         # Convert the HashTable to a PSCustomObject
         $NewRow = [PSCustomObject]$HeaderHashTable
 
         # Write debug info
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Injecting data into new row [$i]: $($SourceCSV[$i].$ColumnName)"
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Injecting data into new row [$i]: $($SourceCSV[$i].$ColumnName)"
 
         # Replace the row data with the appropriate new row data so that old data is not reused
         $NewRow.$ColumnName = $SourceCSV[$i].$ColumnName
@@ -187,16 +187,16 @@ for ($i = 0; $i -lt $SourceCSV.Count; $i++) {
 }
 
 # Check if WhatIf/Confirm is specified, implement risk mitigation
-if ($PSCmdlet.ShouldProcess("Disk", "Write CSV")) {
+if ($PSCmdlet.ShouldProcess('Disk', 'Write CSV')) {
 
     # Write Debug info
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Writing CSV to disk"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Writing CSV to disk"
 
     # Save in memory work to disk
     $DestinationCSV | Export-Csv -Path $Destination
 
     # Write debug info
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - CSV write completed"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - CSV write completed"
 }
 
 # Stop execution and return that efforts were successful.

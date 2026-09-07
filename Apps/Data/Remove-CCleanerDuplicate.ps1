@@ -39,11 +39,11 @@
 #>
 
 # cmdlet bind the script for simulation support
-[CmdletBinding(SupportsShouldProcess=$true)]
+[CmdletBinding(SupportsShouldProcess = $true)]
 
 param(
-    [ValidateScript({Test-Path -Path $_ -PathType "Leaf"})]
-    [System.String]$Path=".\CCleaner Export.txt",
+    [ValidateScript({ Test-Path -Path $_ -PathType 'Leaf' })]
+    [System.String]$Path = '.\CCleaner Export.txt',
     [Switch]$All
 )
 
@@ -57,7 +57,7 @@ param(
 foreach ($Line in $RawDuplicateList) {
 
     # Write extra info for troubleshooting
-    Write-Verbose -Message "Current Line:"
+    Write-Verbose -Message 'Current Line:'
     Write-Verbose -Message $Line
 
     # Check to see if the line is a list separator
@@ -74,18 +74,18 @@ foreach ($Line in $RawDuplicateList) {
                 $SkipItem = $false
 
                 # Write extra info for troubleshooting
-                Write-Verbose -Message "Skipping the current item"
+                Write-Verbose -Message 'Skipping the current item'
 
                 # Skip the first line and move on to the next
                 continue
             }
 
             # Write extra info for troubleshooting
-            Write-Verbose -Message "Deleting:"
+            Write-Verbose -Message 'Deleting:'
             Write-Verbose -Message $ToDelete
 
             # Simulate the delete command or execute it if no deletion is necessary
-            if ($PSCmdlet.ShouldProcess("File: $ToDelete", "Delete")) {
+            if ($PSCmdlet.ShouldProcess("File: $ToDelete", 'Delete')) {
                 # Delete the specified file
                 Remove-Item -Path $ToDelete
             }
@@ -98,13 +98,13 @@ foreach ($Line in $RawDuplicateList) {
         continue
     } else {
         # Write extra info for troubleshooting
-        Write-Verbose -Message "File container:"
+        Write-Verbose -Message 'File container:'
         Write-Verbose -Message ($Line -split "`t")[1]
 
-        Write-Verbose -Message "File Leaf:"
+        Write-Verbose -Message 'File Leaf:'
         Write-Verbose -Message ($Line -split "`t")[0]
 
-        Write-Verbose -Message "Computed Line:"
+        Write-Verbose -Message 'Computed Line:'
         Write-Verbose -Message "$(($Line -split "`t")[1])\$(($Line -split "`t")[0])"
 
         # Add the current item to the list after parsing

@@ -40,12 +40,12 @@
 #Requires -Module Az.Accounts
 
 param(
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
     [GUID]$AdminUnitID,
-    [Parameter(Mandatory=$true)]
+    [Parameter(Mandatory = $true)]
     [ValidateNotNullOrEmpty()]
-    [String]$UPNMatch = "*@example.com",
+    [String]$UPNMatch = '*@example.com',
     [ValidateNotNullOrEmpty()]
     [String]$UPNNegativeMatch,
     [ValidateNotNullOrEmpty()]
@@ -55,17 +55,17 @@ param(
 # If the variable is defined, execute the whitespace removal
 if ($ExcludedUserGUID) {
     # Remove whitespace from the excluded GUIDs parameter
-    $ExcludedUserGUID = $ExcludedUserGUID -replace "\s+", ""
+    $ExcludedUserGUID = $ExcludedUserGUID -replace '\s+', ''
 
     # Split the results into an array and enforce the GUID type
-    [GUID[]]$ExcludedUserGUID = $ExcludedUserGUID -split ","
+    [GUID[]]$ExcludedUserGUID = $ExcludedUserGUID -split ','
 }
 
 # Set the initial URL ofr AU queries
 $GraphAPIAdminUnitURL = "https://graph.microsoft.com/v1.0/directory/administrativeUnits/$AdminUnitID/members/microsoft.graph.user/"
 
 # Set the initial URL for user queries
-$GraphAPIUserURL = "https://graph.microsoft.com/v1.0/users"
+$GraphAPIUserURL = 'https://graph.microsoft.com/v1.0/users'
 
 # Initialize the User List array so that users can be added to it as well as the AU User GUID list
 [System.Object[]]$UserList = @()
@@ -76,49 +76,49 @@ $GraphAPIUserURL = "https://graph.microsoft.com/v1.0/users"
 Connect-AzAccount -Identity | Out-Null
 
 # Get an Access token for Microsoft Graph
-$Token = (Get-AzAccessToken -Resource "https://graph.microsoft.com/").Token
+$Token = (Get-AzAccessToken -Resource 'https://graph.microsoft.com/').Token
 
 # Build the auth header
-$Header = @{Authorization = "Bearer $Token"}
+$Header = @{Authorization = "Bearer $Token" }
 
 # Get all users
 # If a next link property is returned, use the next link from the previous request as the url for the current request and all the users to the user list.
 do {
     # Web request against the users endpoint
-    $Result = Invoke-RestMethod -Method "Get" -Uri $GraphAPIUserURL -Headers $Header
+    $Result = Invoke-RestMethod -Method 'Get' -Uri $GraphAPIUserURL -Headers $Header
     
     # Set the Graph API Query url to the next link value that was passed from the Graph API if there are more pages to iterate over.
     # This value may be blank, this means there are no more pages of data to iterate over.
-    $GraphAPIUserURL = $Result."@odata.nextLink"
+    $GraphAPIUserURL = $Result.'@odata.nextLink'
 
     # Extract the users from the list
     $UserList += $Result.Value
 
-# Continue looping as long as there are more pages
-} while ($Result."@odata.nextLink")
+    # Continue looping as long as there are more pages
+} while ($Result.'@odata.nextLink')
 
 
 # Get the list of the users in the specified administrative unit
 do {
     # Run the query
-    $Result = Invoke-RestMethod -Method "Get" -Uri $GraphAPIAdminUnitURL -Headers $Header
+    $Result = Invoke-RestMethod -Method 'Get' -Uri $GraphAPIAdminUnitURL -Headers $Header
     
     # Set the Graph API Query url to the next link value that was passed from the Graph API if there are more pages to iterate over.
     # This value may be blank, this means there are no more pages of data to iterate over.
-    $GraphAPIAdminUnitURL = $Result."@odata.nextLink"
+    $GraphAPIAdminUnitURL = $Result.'@odata.nextLink'
 
     # Extract the GUIDs from the result of the web request
     [GUID[]]$AUUserGuidList += $Result.Value.ID
 
-# Continue looping as long as there are more pages
-} while ($Result."@odata.nextLink")
+    # Continue looping as long as there are more pages
+} while ($Result.'@odata.nextLink')
 
 # Loop through each user in the list to ensure they are in the correct AU
 foreach ($User in $UserList) {
     # Execute the blob matches on the UPN to ensure it is the correct UPN format.
-    if (($User.UserPrincipalName -like $UPNMatch) -and ($User.UserPrincipalName -NotLike $UPNNegativeMatch)) {
+    if (($User.UserPrincipalName -like $UPNMatch) -and ($User.UserPrincipalName -notlike $UPNNegativeMatch)) {
         # Only add users that are not in the AU, as if the user is already in it, it will throw an error.
-        if (($User.Id -NotIn $AUUserGuidList) -and ($User.ID -NotIn $ExcludedUserGUID)) {
+        if (($User.Id -notin $AUUserGuidList) -and ($User.ID -notin $ExcludedUserGUID)) {
             # Expose the current user's object ID
             $CurrentID = $User.Id
 
@@ -130,7 +130,7 @@ foreach ($User in $UserList) {
 "@
 
             # Add the user to the AU
-            Invoke-RestMethod -Method "Post" -Uri "https://graph.microsoft.com/v1.0/directory/administrativeUnits/$AdminUnitID/members/`$ref" -Headers $Header -Body $Body -ContentType "application/json"
+            Invoke-RestMethod -Method 'Post' -Uri "https://graph.microsoft.com/v1.0/directory/administrativeUnits/$AdminUnitID/members/`$ref" -Headers $Header -Body $Body -ContentType 'application/json'
         }
     }
 }

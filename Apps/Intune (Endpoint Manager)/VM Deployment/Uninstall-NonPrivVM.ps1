@@ -28,14 +28,14 @@
 [CmdletBinding(SupportsShouldProcess = $true)]
 
 param(
-    [System.String]$VMName = "Enterprise"
+    [System.String]$VMName = 'Enterprise'
 )
 
 # List each VHD path attached to the specified VM
 [System.String[]]$VhdPathList = (Get-VM -Name $VMName).HardDrives.Path
 
 # Simulate the command if requested
-if ($PSCmdlet.ShouldProcess("VM: $VMName", "Remove")) {
+if ($PSCmdlet.ShouldProcess("VM: $VMName", 'Remove')) {
     # Removes the specified VM config
     Remove-VM -Name $VMName -Force
 }
@@ -43,7 +43,7 @@ if ($PSCmdlet.ShouldProcess("VM: $VMName", "Remove")) {
 # Loop through each VHD file present in the list
 foreach ($DrivePath in $VhdPathList) {
     # Simulate the command if requested
-    if ($PSCmdlet.ShouldProcess("VHD File", "Remove")) {
+    if ($PSCmdlet.ShouldProcess('VHD File', 'Remove')) {
         # Remove the specified VHD file
         Remove-Item -Path $DrivePath -Force
     }

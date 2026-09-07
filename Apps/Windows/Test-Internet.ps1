@@ -21,8 +21,8 @@
 
 # Allow command line automation.
 param(
-    [string]$PingDestination = "bing.com",
-    [string]$OutputFile = "Internet Stress Test.log",
+    [string]$PingDestination = 'bing.com',
+    [string]$OutputFile = 'Internet Stress Test.log',
     [int]$LoopRounds = 0
 )
 

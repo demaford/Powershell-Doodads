@@ -55,8 +55,8 @@ param(
         ParameterSetName = 'CLI'
     )]
     [ValidateScript({
-        Test-Path -Path $_ -PathType "Container"
-    })]
+            Test-Path -Path $_ -PathType 'Container'
+        })]
     [ValidateNotNullOrEmpty()]
     [System.String]$Path,
 
@@ -103,7 +103,7 @@ param(
 
 begin {
     # Allow PowerShell to access the Windows Forms name space
-    Add-Type -AssemblyName "System.Windows.Forms"
+    Add-Type -AssemblyName 'System.Windows.Forms'
 
     # Enable the Windows theming engine to theme the windows form that is rendered by PowerShell
     [System.Windows.Forms.Application]::EnableVisualStyles()
@@ -128,28 +128,27 @@ begin {
             1 - Word has not been initialized properly, check to ensure it has been installed.
         #>
 
-        Write-Verbose -Message "Instantiating Word object"
+        Write-Verbose -Message 'Instantiating Word object'
 
         # Initialize Word
-        $WordObject = New-Object -ComObject "Word.application"
+        $WordObject = New-Object -ComObject 'Word.application'
 
         # Write debug info to the console
         Write-Debug -Message $WordObject
 
         # Check to see if the object has been created properly
-        if ($WordObject -IsNot [Microsoft.Office.Interop.Word.ApplicationClass]) {
+        if ($WordObject -isnot [Microsoft.Office.Interop.Word.ApplicationClass]) {
             # Write an error message to stderr (this is non-terminating)
-            Write-Error "Word has not been initialized properly. Check to make sure it is installed."
+            Write-Error 'Word has not been initialized properly. Check to make sure it is installed.'
 
             # Return $False for a failed initialization
             $PSCmdlet.WriteObject($false)
 
             # Exit Script execution unsuccessfully
-            Exit 1
-        }
-        else {
+            exit 1
+        } else {
             # If the object was created, return it
-            Return $WordObject
+            return $WordObject
         }
     }
     function Invoke-FindReplaceExecute {
@@ -189,7 +188,7 @@ begin {
         )
 
         # Find and replace against the specified document section
-        Return $DocSelectionObject.Execute(
+        return $DocSelectionObject.Execute(
             $Find,
             $MatchCase,
             $MatchWholeWord,
@@ -227,22 +226,20 @@ begin {
         #>
 
         # Create an directory file dialog box and set the accepted file types.
-        $OpenDialog = New-Object "System.Windows.Forms.FolderBrowserDialog"
+        $OpenDialog = New-Object 'System.Windows.Forms.FolderBrowserDialog'
         # Automatically select the currently selected path
         if ($Path) {
             $OpenDialog.SelectedPath = $Path
-        }
-        else {
-            $OpenDialog.SelectedPath = ""
+        } else {
+            $OpenDialog.SelectedPath = ''
         }
 
         # Show the dialog box and capture the results.
         # If the user selected a file return the file path. Otherwise return false if nothing is selected.
         if ($OpenDialog.ShowDialog() -eq [System.Windows.Forms.DialogResult]::OK) {
-            Return $OpenDialog.SelectedPath
-        }
-        else {
-            Return $false
+            return $OpenDialog.SelectedPath
+        } else {
+            return $false
         }
     }
 
@@ -267,20 +264,20 @@ begin {
         #Requires -Version 5.1
 
         # Create the blank form with require
-        $Form = New-Object "System.Windows.Forms.Form"
+        $Form = New-Object 'System.Windows.Forms.Form'
         $Form.ClientSize = New-Object System.Drawing.Point(400, 400)
-        $Form.text = "Word Bulk Find and Replace"
+        $Form.text = 'Word Bulk Find and Replace'
         $Form.TopMost = $true
 
-        $FindLabel = New-Object "System.Windows.Forms.Label"
-        $FindLabel.text = "Find:"
+        $FindLabel = New-Object 'System.Windows.Forms.Label'
+        $FindLabel.text = 'Find:'
         $FindLabel.AutoSize = $true
         $FindLabel.width = 25
         $FindLabel.height = 10
         $FindLabel.location = New-Object System.Drawing.Point(17, 18)
         $FindLabel.Font = New-Object System.Drawing.Font('Segoe UI', 12)
 
-        $FindTextBox = New-Object "System.Windows.Forms.TextBox"
+        $FindTextBox = New-Object 'System.Windows.Forms.TextBox'
         $FindTextBox.MultiLine = $false
         $FindTextBox.width = 180
         $FindTextBox.height = 20
@@ -288,15 +285,15 @@ begin {
         $FindTextBox.Font = New-Object System.Drawing.Font('Segoe UI', 12)
         if ($Find) { $FindTextBox.Text = $Find }
 
-        $ReplaceLabel = New-Object "System.Windows.Forms.Label"
-        $ReplaceLabel.text = "Replace With:"
+        $ReplaceLabel = New-Object 'System.Windows.Forms.Label'
+        $ReplaceLabel.text = 'Replace With:'
         $ReplaceLabel.AutoSize = $true
         $ReplaceLabel.width = 25
         $ReplaceLabel.height = 10
         $ReplaceLabel.location = New-Object System.Drawing.Point(17, 94)
         $ReplaceLabel.Font = New-Object System.Drawing.Font('Microsoft Sans Serif', 12)
 
-        $ReplaceTextBox = New-Object "System.Windows.Forms.TextBox"
+        $ReplaceTextBox = New-Object 'System.Windows.Forms.TextBox'
         $ReplaceTextBox.MultiLine = $false
         $ReplaceTextBox.width = 180
         $ReplaceTextBox.height = 20
@@ -304,16 +301,16 @@ begin {
         $ReplaceTextBox.Font = New-Object System.Drawing.Font('Microsoft Sans Serif', 12)
         if ($Replace) { $ReplaceTextBox.Text = $Replace }
 
-        $WorkingDirectoryLabel = New-Object "System.Windows.Forms.Label"
-        $WorkingDirectoryLabel.text = "Working Directory:"
+        $WorkingDirectoryLabel = New-Object 'System.Windows.Forms.Label'
+        $WorkingDirectoryLabel.text = 'Working Directory:'
         $WorkingDirectoryLabel.AutoSize = $true
         $WorkingDirectoryLabel.width = 25
         $WorkingDirectoryLabel.height = 10
         $WorkingDirectoryLabel.location = New-Object System.Drawing.Point(17, 167)
         $WorkingDirectoryLabel.Font = New-Object System.Drawing.Font('Segoe UI', 12)
 
-        $SelectedDirLabel = New-Object "System.Windows.Forms.Label"
-        $SelectedDirLabel.text = "No working directory selected..."
+        $SelectedDirLabel = New-Object 'System.Windows.Forms.Label'
+        $SelectedDirLabel.text = 'No working directory selected...'
         $SelectedDirLabel.AutoSize = $true
         $SelectedDirLabel.width = 25
         $SelectedDirLabel.height = 10
@@ -321,8 +318,8 @@ begin {
         $SelectedDirLabel.Font = New-Object System.Drawing.Font('Segoe UI', 12)
         if ($Path) { $SelectedDirLabel.Text = $Path }
 
-        $BrowseButton = New-Object "System.Windows.Forms.Button"
-        $BrowseButton.text = "Browse for Directory"
+        $BrowseButton = New-Object 'System.Windows.Forms.Button'
+        $BrowseButton.text = 'Browse for Directory'
         $BrowseButton.width = 178
         $BrowseButton.height = 30
         $BrowseButton.location = New-Object System.Drawing.Point(17, 248)
@@ -335,8 +332,8 @@ begin {
                 }
             })
 
-        $RecurseCheckBox = New-Object "System.Windows.Forms.CheckBox"
-        $RecurseCheckBox.text = "Recursive"
+        $RecurseCheckBox = New-Object 'System.Windows.Forms.CheckBox'
+        $RecurseCheckBox.text = 'Recursive'
         $RecurseCheckBox.AutoSize = $false
         $RecurseCheckBox.width = 95
         $RecurseCheckBox.height = 20
@@ -344,39 +341,39 @@ begin {
         $RecurseCheckBox.Font = New-Object System.Drawing.Font('Segoe UI', 12)
         if ($Recurse) { $RecurseCheckBox.Checked = $Recurse }
 
-        $FindAndReplaceButton = New-Object "System.Windows.Forms.Button"
-        $FindAndReplaceButton.text = "Find And Replace"
+        $FindAndReplaceButton = New-Object 'System.Windows.Forms.Button'
+        $FindAndReplaceButton.text = 'Find And Replace'
         $FindAndReplaceButton.width = 148
         $FindAndReplaceButton.height = 30
         $FindAndReplaceButton.enabled = $true
         $FindAndReplaceButton.location = New-Object System.Drawing.Point(125, 343)
         $FindAndReplaceButton.Font = New-Object System.Drawing.Font('Microsoft Sans Serif', 12)
         $FindAndReplaceButton.Add_Click({
-            # Validate required find data is present
-            if ((-not ($FindTextBox.Text)) -and (-not ($Find))) {
-                [System.Windows.Forms.MessageBox]::Show("You cannot run a find and replace without the find data!", "Operation Status")
-                Return $false
-            }
-            if ((-not ($ReplaceTextBox.Text)) -and (-not ($Replace))) {
-                [System.Windows.Forms.MessageBox]::Show("You cannot run a find and replace without the replace data!", "Operation Status")
-                Return $false
-            }
-            if (-not ($Path)) {
-                [System.Windows.Forms.MessageBox]::Show("You cannot run a bulk find and replace without a directory to operate against!", "Operation Status")
-                Return $false
-            }
+                # Validate required find data is present
+                if ((-not ($FindTextBox.Text)) -and (-not ($Find))) {
+                    [System.Windows.Forms.MessageBox]::Show('You cannot run a find and replace without the find data!', 'Operation Status')
+                    return $false
+                }
+                if ((-not ($ReplaceTextBox.Text)) -and (-not ($Replace))) {
+                    [System.Windows.Forms.MessageBox]::Show('You cannot run a find and replace without the replace data!', 'Operation Status')
+                    return $false
+                }
+                if (-not ($Path)) {
+                    [System.Windows.Forms.MessageBox]::Show('You cannot run a bulk find and replace without a directory to operate against!', 'Operation Status')
+                    return $false
+                }
 
-            # Update global variables at runtime
-            $script:Find = $FindTextBox.Text
-            $script:Replace = $ReplaceTextBox.Text
-            $script:Recurse = $RecurseCheckBox.Checked
+                # Update global variables at runtime
+                $script:Find = $FindTextBox.Text
+                $script:Replace = $ReplaceTextBox.Text
+                $script:Recurse = $RecurseCheckBox.Checked
 
-            # Execute the find and replace function
-            Update-WordDocFile
+                # Execute the find and replace function
+                Update-WordDocFile
 
-            # Display a message to the user that find and replace has finished
-            [System.Windows.Forms.MessageBox]::Show("Find and replace completed", "Operation Status")
-        })
+                # Display a message to the user that find and replace has finished
+                [System.Windows.Forms.MessageBox]::Show('Find and replace completed', 'Operation Status')
+            })
 
         # Place the objects onto an array to be able to access them later.
         $UIItems = @(
@@ -424,7 +421,7 @@ begin {
                 ValueFromPipelineByPropertyName = $true
             )]
             [ValidateScript( {
-                    Test-Path -Path $_ -PathType "Container"
+                    Test-Path -Path $_ -PathType 'Container'
                 })]
             [ValidateNotNullOrEmpty()]
             [System.String]$Path,
@@ -432,15 +429,15 @@ begin {
         )
         # Build the params for the GCI cmdlet in a way to be able to dynamically call parameters as necessary
         $GCIParams = @{
-            "Path"    = "$Path\*";
-            "Include" = "*.docx", "*.doc"
+            'Path'    = "$Path\*"
+            'Include' = '*.docx', '*.doc'
         }
 
         # Enable the recurse parameter if specified by the user
         if ($Recurse) { $GCIParams.Recurse = $true }
 
         # List all of the MS Word doc files and return the list of file paths
-        Return (Get-ChildItem @GCIParams).FullName  
+        return (Get-ChildItem @GCIParams).FullName  
     }
 
     function Update-WordDocFile {
@@ -465,10 +462,10 @@ begin {
         [CmdletBinding(SupportsShouldProcess = $true)]
 
         # Get the list of word docs to run the find and replace against
-        $DocListParams = @{"Path" = $Path}
+        $DocListParams = @{'Path' = $Path }
 
         # Add the recurse parameter if the recurse parameter is specified
-        if ($Recurse) {$DocListParams.Recurse = $true}
+        if ($Recurse) { $DocListParams.Recurse = $true }
 
         # Param splat the required parameters in the file path list generator
         $WordDocList = Get-DocPathList @DocListParams
@@ -483,7 +480,7 @@ begin {
             if ($null -eq $MSWord.Application) {
 
                 # Write verbose info to the console
-                Write-Verbose -Message "MS Word is not currently initialized, re-initializing MS Word"
+                Write-Verbose -Message 'MS Word is not currently initialized, re-initializing MS Word'
 
                 # Re-init the MS Word object
                 $MSWord = New-MSWord
@@ -494,7 +491,7 @@ begin {
                     Write-Debug -Message $MSWord
 
                     # Write a message to stderr (non-terminating)
-                    Write-Error -Message "The MS Word application was closed while the script was running!"
+                    Write-Error -Message 'The MS Word application was closed while the script was running!'
 
                     # Return $false for failed operation
                     $PSCmdlet.WriteObject($false)
@@ -546,13 +543,13 @@ begin {
             }
 
             # Support simulation
-            if ($PSCmdlet.ShouldProcess("MS Word Document", "Save Changes")) {
+            if ($PSCmdlet.ShouldProcess('MS Word Document', 'Save Changes')) {
                 # Save the edits
                 $OpenWordDoc.Save()
             }
 
             # Record the file edits
-            if ($RoundReplace) {$script:EditedFiles += $Doc}
+            if ($RoundReplace) { $script:EditedFiles += $Doc }
 
             # Close the document
             $OpenWordDoc.Close()
@@ -589,7 +586,7 @@ process {
 
 end {
     # Check if the script is dot sourced, if it is then do not execute the stuff inside.
-    if (($MyInvocation.Line -NotMatch "^\.\s") -and (-not $CLIMode)) {
+    if (($MyInvocation.Line -notmatch '^\.\s') -and (-not $CLIMode)) {
         # Show the main UI for user interaction
         Show-MainUI
     }
@@ -602,5 +599,5 @@ end {
     $MSWord = $Null
 
     # Return a list of files that were edited
-    Return $EditedFiles
+    return $EditedFiles
 }

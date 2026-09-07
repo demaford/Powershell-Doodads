@@ -1,11 +1,11 @@
 # Create the touch command
-New-Alias -Name "Touch" -Value "New-Item" -Description "Create touch command, similar to Linux"
+New-Alias -Name 'Touch' -Value 'New-Item' -Description 'Create touch command, similar to Linux'
 
 # Create the Grep command
-New-Alias -Name "Grep" -Value "Select-String" -Description "Create the grep command, similar to Linux"
+New-Alias -Name 'Grep' -Value 'Select-String' -Description 'Create the grep command, similar to Linux'
 
 # Replace the ping command with a modern replacement
-New-Alias -Name "Ping" -Value "Test-NetConnection" -Description "Replace the legacy ping command with a modern replacement"
+New-Alias -Name 'Ping' -Value 'Test-NetConnection' -Description 'Replace the legacy ping command with a modern replacement'
 
 # Create the tail command
 function Tail {
@@ -28,20 +28,20 @@ function Tail {
     param(
         # Specifies a path to one locations
         [Parameter(
-            Mandatory=$true,
-            Position=0,
-            HelpMessage="Path to one location"
+            Mandatory = $true,
+            Position = 0,
+            HelpMessage = 'Path to one location'
         )]
-        [Alias("PSPath")]
+        [Alias('PSPath')]
         [ValidateNotNullOrEmpty()]
         [String]$Path,
         # Specify the amount of lines to follow
         [Parameter(
-            Mandatory=$false,
-            Position=1,
-            HelpMessage="Specify the amount of lines to follow"
+            Mandatory = $false,
+            Position = 1,
+            HelpMessage = 'Specify the amount of lines to follow'
         )]
-        [Alias("F")]
+        [Alias('F')]
         [System.Int32]$LinesToFollow = 50
 
     )
@@ -75,14 +75,14 @@ function ll {
     param(
         # Specifies a path to one or more locations.
         [Parameter(
-            Position=0,
-            ValueFromPipeline=$true,
-            ValueFromPipelineByPropertyName=$true,
-            HelpMessage="Path to one or more locations."
+            Position = 0,
+            ValueFromPipeline = $true,
+            ValueFromPipelineByPropertyName = $true,
+            HelpMessage = 'Path to one or more locations.'
         )]
-        [Alias("PSPath")]
+        [Alias('PSPath')]
         [ValidateNotNullOrEmpty()]
-        [string[]]$Path = ".\"
+        [string[]]$Path = '.\'
     )
 
     # Retrieve the items in the current container, including hidden items

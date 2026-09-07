@@ -155,95 +155,95 @@ begin {
             'SOA' {
                 # Return a SOA record
                 return [PSCustomObject]@{
-                    'Host'      = $HostName;
-                    'Type'      = $Type;
-                    'Class'     = $Class;
-                    'TTL'       = $TTL;
-                    'PrimaryNS' = $PrimaryNameServer;
-                    'Serial'    = $Serial;
-                    'Refresh'   = $Refresh;
-                    'Retry'     = $Retry;
-                    'Expire'    = $Expire;
-                    'Minimum'   = $Minimum;
+                    'Host'      = $HostName
+                    'Type'      = $Type
+                    'Class'     = $Class
+                    'TTL'       = $TTL
+                    'PrimaryNS' = $PrimaryNameServer
+                    'Serial'    = $Serial
+                    'Refresh'   = $Refresh
+                    'Retry'     = $Retry
+                    'Expire'    = $Expire
+                    'Minimum'   = $Minimum
                     'Contact'   = $ZoneContact
                 }
             }
             { ($_ -eq 'A') -or ($_ -eq 'AAAA') } {
                 return [PSCustomObject]@{
-                    'Host'  = $HostName;
-                    'Type'  = $Type;
-                    'Class' = $Class;
-                    'TTL'   = $TTL;
-                    'IP'    = $IP;
+                    'Host'  = $HostName
+                    'Type'  = $Type
+                    'Class' = $Class
+                    'TTL'   = $TTL
+                    'IP'    = $IP
                 }
             }
             'CNAME' {
                 return [PSCustomObject]@{
-                    'Host'  = $HostName;
-                    'Type'  = $Type;
-                    'Class' = $Class;
-                    'TTL'   = $TTL;
-                    'Value' = $Value;
+                    'Host'  = $HostName
+                    'Type'  = $Type
+                    'Class' = $Class
+                    'TTL'   = $TTL
+                    'Value' = $Value
                 }
             }
             'CAA' {
                 return [PSCustomObject]@{
-                    'Host'  = $HostName;
-                    'Type'  = $Type;
-                    'Class' = $Class;
-                    'TTL'   = $TTL;
-                    'Flag'  = $Flag;
-                    'Tag'   = $Tag;
-                    'Value' = $Value;
+                    'Host'  = $HostName
+                    'Type'  = $Type
+                    'Class' = $Class
+                    'TTL'   = $TTL
+                    'Flag'  = $Flag
+                    'Tag'   = $Tag
+                    'Value' = $Value
                 }
             }
             'MX' {
                 return [PSCustomObject]@{
-                    'Host'     = $HostName;
-                    'Type'     = $Type;
-                    'Class'    = $Class;
-                    'TTL'      = $TTL;
-                    'Priority' = $Priority;
-                    'Value'    = $Value;
+                    'Host'     = $HostName
+                    'Type'     = $Type
+                    'Class'    = $Class
+                    'TTL'      = $TTL
+                    'Priority' = $Priority
+                    'Value'    = $Value
                 }
             }
             'NS' {
                 return [PSCustomObject]@{
-                    'Host'  = $HostName;
-                    'Type'  = $Type;
-                    'Class' = $Class;
-                    'TTL'   = $TTL;
-                    'Value' = $Value;
+                    'Host'  = $HostName
+                    'Type'  = $Type
+                    'Class' = $Class
+                    'TTL'   = $TTL
+                    'Value' = $Value
                 }
             }
             'TXT' {
                 return [PSCustomObject]@{
-                    'Host'  = $HostName;
-                    'Type'  = $Type;
-                    'Class' = $Class;
-                    'TTL'   = $TTL;
-                    'Value' = $Value;
+                    'Host'  = $HostName
+                    'Type'  = $Type
+                    'Class' = $Class
+                    'TTL'   = $TTL
+                    'Value' = $Value
                 }
             }
             'SRV' {
                 return [PSCustomObject]@{
-                    'Host'     = $HostName;
-                    'Type'     = $Type;
-                    'Class'    = $Class;
-                    'TTL'      = $TTL;
-                    'Priority' = $Priority;
-                    'Weight'   = $Weight;
-                    'Port'     = $Port;
-                    'Value'    = $Value;
+                    'Host'     = $HostName
+                    'Type'     = $Type
+                    'Class'    = $Class
+                    'TTL'      = $TTL
+                    'Priority' = $Priority
+                    'Weight'   = $Weight
+                    'Port'     = $Port
+                    'Value'    = $Value
                 }
             }
             'PTR' {
                 return [PSCustomObject]@{
-                    'Host'  = $HostName;
-                    'Type'  = $Type;
-                    'Class' = $Class;
-                    'TTL'   = $TTL;
-                    'Value' = $Value;
+                    'Host'  = $HostName
+                    'Type'  = $Type
+                    'Class' = $Class
+                    'TTL'   = $TTL
+                    'Value' = $Value
                 }
             }
         }
@@ -290,8 +290,7 @@ begin {
 
             # Set the computed TTL to be equal to the in-line TTL
             return $Converted
-        }
-        else {
+        } else {
             # If no TTL was specified, set the computed ttl to the TTL Command's value or 0 if no ttl is specified
             return $CurrentTTL
         }
@@ -354,8 +353,7 @@ process {
 
                 # Move onto the next line
                 continue
-            }
-            elseif ($NoCommentLine -like '`$TTL*') {
+            } elseif ($NoCommentLine -like '`$TTL*') {
                 # If the line is a TTL command
 
                 # Remove the TTL prefix, any trailing white space, and set the current TTL to the computed TTL
@@ -367,8 +365,7 @@ process {
 
                 # Move onto the next line
                 continue
-            }
-            elseif ($NoCommentLine -match '^(?<CurrentHost>[\w\-.]+)') {
+            } elseif ($NoCommentLine -match '^(?<CurrentHost>[\w\-.]+)') {
                 # If the current host is terminated with a period
                 if ($Matches.CurrentHost[-1] -eq '.') {
                     # Write verbose info to console
@@ -376,8 +373,7 @@ process {
 
                     # Make the current host the the current match without modification
                     $CurrentHost = $Matches.CurrentHost
-                }
-                else {
+                } else {
                     # Write verbose info to console
                     Write-Verbose -Message 'Current host terminated without a period'
 
@@ -506,8 +502,7 @@ process {
                         foreach ($Record in $RecordList) { Write-Verbose -Message $Record }
                         
                         # Check parentheses mode toggling
-                    }
-                    elseif ($NoCommentLine -like '*(*') {
+                    } elseif ($NoCommentLine -like '*(*') {
                         # if a line triggers a parentheses set
                         # Enable parentheses mode
                         $InParentheses = $true

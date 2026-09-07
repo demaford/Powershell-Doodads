@@ -53,9 +53,7 @@
 # Each parameter is detailed in the above help documentation.
 param(
     # Parameters for GUI.
-    [Parameter(
-        ParameterSetName = 'GUI'
-    )]
+    [Parameter(ParameterSetName = 'GUI')]
     [switch]$LegacyVisuals = $False,
 
     # Parameters for CLI.
@@ -71,34 +69,24 @@ param(
         Mandatory = $true
     )]
     [string]$InputFile,
-    [Parameter(
-        ParameterSetName = 'CLI'
-    )]
+    [Parameter(ParameterSetName = 'CLI')]
     [string]$OutputFile,
-    [Parameter(
-        ParameterSetName = 'CLI'
-    )]
+    [Parameter(ParameterSetName = 'CLI')]
     [switch]$AdminMode,
-    [Parameter(
-        ParameterSetName = 'CLI'
-    )]
+    [Parameter(ParameterSetName = 'CLI')]
     [switch]$SelfDelete,
-    [Parameter(
-        ParameterSetName = 'CLI'
-    )]
+    [Parameter(ParameterSetName = 'CLI')]
     [switch]$HideTerminal,
-    [Parameter(
-        ParameterSetName = 'CLI'
-    )]
-    [string[]]$CLIArgument = ""
+    [Parameter(ParameterSetName = 'CLI')]
+    [string[]]$CLIArgument = ''
 )
 
 # If the app is running in GUI mode (not CLI mode), execute the below.
 # If the app is running in CLI mode, don't execute the below
 if (-not $CLIMode) {
     # Import required libraries
-    Add-Type -AssemblyName "System.Windows.Forms"
-    Add-Type -AssemblyName "System.Drawing"
+    Add-Type -AssemblyName 'System.Windows.Forms'
+    Add-Type -AssemblyName 'System.Drawing'
 
     # Enable pretty interface controls (by default)
     # Windows 98 styles are ugly compared to today's standards
@@ -129,17 +117,17 @@ class AppConfig {
         $this.ArgumentList = $Script:CLIArgument
 
         # Process the input path and update it to be the output path with modifications.
-        if ($this.OutputFile -eq "") {$this.OutputFile = $this.InputFile + ".bat"}
+        if ($this.OutputFile -eq '') { $this.OutputFile = $this.InputFile + '.bat' }
 
         # Build the initial batch header
-        $this.BatchHeader = @"
+        $this.BatchHeader = @'
 @echo off
 color 0A
 cls
 cd /d %~dp0
 set Script="%Temp%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.ps1"
 (
-"@
+'@
         $this.AdminHeader = ':CheckAdmin
 net session >nul 2>&1
 if %errorLevel% == 0 (
@@ -160,7 +148,7 @@ del %Script%"
     # Write the specified data in append mode to the output file
     [Void]WriteFile([System.String]$DataToWrite) {
         # Append the specified data to the bottom of the output file in ASCII format.
-        Out-File -FilePath $this.OutputFile -Encoding "ASCII" -Append -InputObject $DataToWrite
+        Out-File -FilePath $this.OutputFile -Encoding 'ASCII' -Append -InputObject $DataToWrite
     }
 
     # Write data in either overwrite or append mode to the output file
@@ -168,23 +156,23 @@ del %Script%"
         # If the delete parameter is specified and is $true
         if ($Delete) {
             # Overwrite any existing file data with the new specified data in ASCII format.
-            Out-File -FilePath $this.OutputFile -Encoding "ASCII" -InputObject $DataToWrite
+            Out-File -FilePath $this.OutputFile -Encoding 'ASCII' -InputObject $DataToWrite
         } else {
             # Append the specified data to the bottom of the output file in ASCII format.
-            Out-File -FilePath $this.OutputFile -Encoding "ASCII" -InputObject $DataToWrite -Append
+            Out-File -FilePath $this.OutputFile -Encoding 'ASCII' -InputObject $DataToWrite -Append
         }
     }
 
     # A method that updates the batch header property to contain the expected values for the file write operation
     [Void]ComputeBatchHeaderOptions() {
         # Set the baseline for the batch script's header section
-        $this.BatchHeader = @"
+        $this.BatchHeader = @'
 @echo off
 color 0A
 cls
 cd /d %~dp0
 set Script="%Temp%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.ps1"
-"@
+'@
         # If the run as admin option is set, add the run as admin header section to the baseline
         if ($this.RunAsAdmin) { $this.BatchHeader += "`n`n$($this.AdminHeader)" }
 
@@ -198,21 +186,22 @@ set Script="%Temp%\%RANDOM%-%RANDOM%-%RANDOM%-%RANDOM%.ps1"
         Get-Content -Path $this.InputFile | ForEach-Object {
 
             # Automatically comments out special characters in the current line.
-            $fileLine = $_ -replace "\^", "^^"
-            $fileLine = $fileLine -replace "\|", "^|"
-            $fileLine = $fileLine -replace ">", "^>"
-            $fileLine = $fileLine -replace "<", "^<"
-            $fileLine = $fileLine -replace "%", "%%"
-            $fileLine = $fileLine -replace "&", "^&"
-            $fileLine = $fileLine -replace "\(", "^("
-            $fileLine = $fileLine -replace "\)", "^)"
+            $fileLine = $_ -replace '\^', '^^'
+            $fileLine = $fileLine -replace '\|', '^|'
+            $fileLine = $fileLine -replace '>', '^>'
+            $fileLine = $fileLine -replace '<', '^<'
+            $fileLine = $fileLine -replace '%', '%%'
+            $fileLine = $fileLine -replace '&', '^&'
+            $fileLine = $fileLine -replace '\(', '^('
+            $fileLine = $fileLine -replace '\)', '^)'
             $fileLine = $fileLine -replace '"', '^"'
             
             # If the current input file's line is blank.
-            if ($fileLine -match "^\s*$") {
+            if ($fileLine -match '^\s*$') {
                 # Enter a blank echo which is an echo with a period, this generates a line of nothing in the batch processor
-                $this.WriteFile("echo.")
-            } else { # If the line is not blank then the below applies.
+                $this.WriteFile('echo.')
+            } else {
+                # If the line is not blank then the below applies.
                 # Directly write the line of converted code to the specified file while appending an echo command which will write the line contents to a file.
                 $this.WriteFile("echo $fileLine")            
             }
@@ -253,7 +242,7 @@ del %Script%"
 }
 
 # Instantiate the config engine
-$appConfigInstance = New-Object -TypeName "AppConfig"
+$appConfigInstance = New-Object -TypeName 'AppConfig'
 
 # Create input file dialog function
 function Show-ChangeInput {
@@ -286,33 +275,33 @@ function Show-ChangeInput {
     param()
 
     # Write Verbose info
-    Write-Verbose -Message "Initializing Type (OpenFileDialog)"
+    Write-Verbose -Message 'Initializing Type (OpenFileDialog)'
 
     # Initialize the OpenFileDialog type
-    $InputFileGUI = New-Object -TypeName "System.Windows.Forms.OpenFileDialog"
+    $InputFileGUI = New-Object -TypeName 'System.Windows.Forms.OpenFileDialog'
 
     # Write Verbose info
-    Write-Verbose -Message "Setting dialog settings (file type and title)"
+    Write-Verbose -Message 'Setting dialog settings (file type and title)'
 
     # Set the file selector filter
-    $InputFileGUI.Filter = "PowerShell Script (*.ps1)|*.ps1"
+    $InputFileGUI.Filter = 'PowerShell Script (*.ps1)|*.ps1'
 
     # Set the dialog's Window title
-    $InputFileGUI.Title = "Select a PowerShell File"
+    $InputFileGUI.Title = 'Select a PowerShell File'
 
     # Write Verbose info
-    Write-Verbose -Message "Rendering Open File Dialog"
+    Write-Verbose -Message 'Rendering Open File Dialog'
 
     # Render the dialog for the end user
     $GUIResult = $InputFileGUI.ShowDialog()
 
     # Write debug info
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Dialog info:"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$GUIResult: $GUIResult"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$InputFileGUI.FileName: ${$InputFileGUI.FileName}"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Dialog info:"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$GUIResult: $GUIResult"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$InputFileGUI.FileName: ${$InputFileGUI.FileName}"
 
     # Check to see if the user has provided input
-    if ($GUIResult -eq "OK") {
+    if ($GUIResult -eq 'OK') {
         # Return the user's selected file
         return $InputFileGUI.FileName
     } else {
@@ -351,33 +340,33 @@ function Show-ChangeOutput {
     param()
 
     # Write Verbose info
-    Write-Verbose -Message "Initializing Type (SaveFileDialog)"
+    Write-Verbose -Message 'Initializing Type (SaveFileDialog)'
 
     # Initialize the SaveFileDialog class
-    $OutputFileGUI = New-Object -TypeName "System.Windows.Forms.SaveFileDialog"
+    $OutputFileGUI = New-Object -TypeName 'System.Windows.Forms.SaveFileDialog'
 
     # Write Verbose info
-    Write-Verbose -Message "Setting dialog settings (file type and title)"
+    Write-Verbose -Message 'Setting dialog settings (file type and title)'
 
     # Set the file type to be saved as a Batch Script
-    $OutputFileGUI.Filter = "Batch Script (*.bat)|*.bat"
+    $OutputFileGUI.Filter = 'Batch Script (*.bat)|*.bat'
 
     # Configure the title of the file save dialog
-    $OutputFileGUI.Title = "Save as"
+    $OutputFileGUI.Title = 'Save as'
 
     # Write Verbose info
-    Write-Verbose -Message "Rendering Save File Dialog"
+    Write-Verbose -Message 'Rendering Save File Dialog'
 
     # Render the dialog for the end user.
     $GUIResult = $OutputFileGUI.ShowDialog()
 
     # Write debug info
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Dialog info:"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$GUIResult: $GUIResult"
-    Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$OutputFileGUI.FileName: ${$OutputFileGUI.FileName}"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Dialog info:"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$GUIResult: $GUIResult"
+    Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$OutputFileGUI.FileName: ${$OutputFileGUI.FileName}"
 
     # Check to see if the user has provided input
-    if ($GUIResult -eq "OK") {
+    if ($GUIResult -eq 'OK') {
         # Return the user's specified file path
         return $OutputFileGUI.FileName
     } else {
@@ -387,94 +376,94 @@ function Show-ChangeOutput {
 }
 
 # Starts the main interface
-Function Show-MainUI {
+function Show-MainUI {
     # Initialize font setting
-    $Label_Font = New-Object -TypeName System.Drawing.Font("Segoe UI", 9, [System.Drawing.FontStyle]::Regular)
-    $Argument_Label_Font = New-Object -TypeName System.Drawing.Font("Segoe UI", 13, [System.Drawing.FontStyle]::Regular)
-    $Form_Font = New-Object -TypeName System.Drawing.Font("Segoe UI", 13, [System.Drawing.FontStyle]::Regular)
+    $Label_Font = New-Object -TypeName System.Drawing.Font('Segoe UI', 9, [System.Drawing.FontStyle]::Regular)
+    $Argument_Label_Font = New-Object -TypeName System.Drawing.Font('Segoe UI', 13, [System.Drawing.FontStyle]::Regular)
+    $Form_Font = New-Object -TypeName System.Drawing.Font('Segoe UI', 13, [System.Drawing.FontStyle]::Regular)
 
     # Create main form (window)
-    $Form = New-Object -TypeName "System.Windows.Forms.Form" 
-    $Form.Text = "PowerShell 2 Batch"
+    $Form = New-Object -TypeName 'System.Windows.Forms.Form' 
+    $Form.Text = 'PowerShell 2 Batch'
     $Form.MaximizeBox = $false
     $Form.MinimizeBox = $false
-    $Form.FormBorderStyle = "FixedSingle"
+    $Form.FormBorderStyle = 'FixedSingle'
     $Form.Icon = [System.Drawing.SystemIcons]::Information
-    $Form.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 300, 380
-    $Form.StartPosition = "CenterScreen"
+    $Form.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 300, 380
+    $Form.StartPosition = 'CenterScreen'
     $Form.Font = $Form_Font
     $Form.Topmost = $True
 
     # Input file current settings.
-    $InputFile_Label = New-Object -TypeName "System.Windows.Forms.Label"
-    $InputFile_Label.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 100, 0
-    $InputFile_Label.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 184, 100
-    $InputFile_Label.BorderStyle = "FixedSingle"
-    $InputFile_Label.TextAlign = "MiddleCenter"
+    $InputFile_Label = New-Object -TypeName 'System.Windows.Forms.Label'
+    $InputFile_Label.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 100, 0
+    $InputFile_Label.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 184, 100
+    $InputFile_Label.BorderStyle = 'FixedSingle'
+    $InputFile_Label.TextAlign = 'MiddleCenter'
     $InputFile_Label.Font = $Label_Font
-    $InputFile_Label.Text = "Input File"
+    $InputFile_Label.Text = 'Input File'
 
     # Output file current settings.
-    $OutputFile_Label = New-Object -TypeName "System.Windows.Forms.Label"
-    $OutputFile_Label.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 100, 101
-    $OutputFile_Label.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 184, 100
-    $OutputFile_Label.BorderStyle = "FixedSingle"
-    $OutputFile_Label.TextAlign = "MiddleCenter"
+    $OutputFile_Label = New-Object -TypeName 'System.Windows.Forms.Label'
+    $OutputFile_Label.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 100, 101
+    $OutputFile_Label.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 184, 100
+    $OutputFile_Label.BorderStyle = 'FixedSingle'
+    $OutputFile_Label.TextAlign = 'MiddleCenter'
     $OutputFile_Label.Font = $Label_Font
-    $OutputFile_Label.Text = "Output File"
+    $OutputFile_Label.Text = 'Output File'
 
     # Argument label.
-    $Argument_Label = New-Object -TypeName "System.Windows.Forms.Label"
-    $Argument_Label.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 0, 162
-    $Argument_Label.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 100, 40
-    $Argument_Label.BorderStyle = "None"
-    $Argument_Label.TextAlign = "BottomCenter"
+    $Argument_Label = New-Object -TypeName 'System.Windows.Forms.Label'
+    $Argument_Label.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 0, 162
+    $Argument_Label.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 100, 40
+    $Argument_Label.BorderStyle = 'None'
+    $Argument_Label.TextAlign = 'BottomCenter'
     $Argument_Label.Font = $Argument_Label_Font
-    $Argument_Label.Text = "CLI Arg(s):"
+    $Argument_Label.Text = 'CLI Arg(s):'
 
     # Add Input File Button
-    $Input_Button = New-Object -TypeName "System.Windows.Forms.Button"
-    $Input_Button.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 0, 0
-    $Input_Button.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 100, 60
-    $Input_Button.Text = "Input File"
+    $Input_Button = New-Object -TypeName 'System.Windows.Forms.Button'
+    $Input_Button.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 0, 0
+    $Input_Button.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 100, 60
+    $Input_Button.Text = 'Input File'
 
     # Add Output File Button
-    $Output_Button = New-Object -TypeName "System.Windows.Forms.Button"
-    $Output_Button.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 0, 100
-    $Output_Button.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 100, 60
-    $Output_Button.Text = "Output File"
+    $Output_Button = New-Object -TypeName 'System.Windows.Forms.Button'
+    $Output_Button.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 0, 100
+    $Output_Button.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 100, 60
+    $Output_Button.Text = 'Output File'
 
     # Argument TextBox
-    $Argument_TextBox = New-Object -TypeName "System.Windows.Forms.TextBox"
-    $Argument_TextBox.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 0, 202
-    $Argument_TextBox.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 284, 10
+    $Argument_TextBox = New-Object -TypeName 'System.Windows.Forms.TextBox'
+    $Argument_TextBox.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 0, 202
+    $Argument_TextBox.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 284, 10
 
     # Yes Radio Button, checked by default
-    $Admin_CheckBox = New-Object -TypeName "System.Windows.Forms.CheckBox"
-    $Admin_CheckBox.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 5, 235
-    $Admin_CheckBox.size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 140, 20
+    $Admin_CheckBox = New-Object -TypeName 'System.Windows.Forms.CheckBox'
+    $Admin_CheckBox.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 5, 235
+    $Admin_CheckBox.size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 140, 20
     $Admin_CheckBox.Checked = $false 
-    $Admin_CheckBox.Text = "Run as admin"
+    $Admin_CheckBox.Text = 'Run as admin'
 
     # No Radio Button, not checked by default
-    $HideWindow_CheckBox = New-Object -TypeName "System.Windows.Forms.CheckBox"
-    $HideWindow_CheckBox.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 150, 235
-    $HideWindow_CheckBox.size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 160, 20
+    $HideWindow_CheckBox = New-Object -TypeName 'System.Windows.Forms.CheckBox'
+    $HideWindow_CheckBox.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 150, 235
+    $HideWindow_CheckBox.size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 160, 20
     $HideWindow_CheckBox.Checked = $false
-    $HideWindow_CheckBox.Text = "Hide Console"
+    $HideWindow_CheckBox.Text = 'Hide Console'
 
     # Yes Radio Button, checked by default
-    $SelfDelete_CheckBox = New-Object -TypeName "System.Windows.Forms.CheckBox"
-    $SelfDelete_CheckBox.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 5, 258
-    $SelfDelete_CheckBox.size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 140, 20
+    $SelfDelete_CheckBox = New-Object -TypeName 'System.Windows.Forms.CheckBox'
+    $SelfDelete_CheckBox.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 5, 258
+    $SelfDelete_CheckBox.size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 140, 20
     $SelfDelete_CheckBox.Checked = $false 
-    $SelfDelete_CheckBox.Text = "Self Delete"
+    $SelfDelete_CheckBox.Text = 'Self Delete'
     
     # Add Convert Button
-    $Convert_Button = New-Object -TypeName "System.Windows.Forms.Button"
-    $Convert_Button.Location = New-Object -TypeName "System.Drawing.Point" -ArgumentList 0, 281
-    $Convert_Button.Size = New-Object -TypeName "System.Drawing.Size" -ArgumentList 284, 60
-    $Convert_Button.Text = "Convert PowerShell 2 Batch"
+    $Convert_Button = New-Object -TypeName 'System.Windows.Forms.Button'
+    $Convert_Button.Location = New-Object -TypeName 'System.Drawing.Point' -ArgumentList 0, 281
+    $Convert_Button.Size = New-Object -TypeName 'System.Drawing.Size' -ArgumentList 284, 60
+    $Convert_Button.Text = 'Convert PowerShell 2 Batch'
 
     # Add Button onClick event listener and logic
     $Convert_Button.Add_Click(
@@ -520,7 +509,8 @@ Function Show-MainUI {
 if ($CLIMode) {
     # Execute the conversion process
     $appConfigInstance.ExecuteConversion()
-} else { # if the CLI mode param was not specified
+} else {
+    # if the CLI mode param was not specified
     # Start the Main UI renderer
     Show-MainUI
 }

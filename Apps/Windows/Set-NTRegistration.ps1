@@ -85,46 +85,46 @@
 # Cmdlet bind the script to enable advanced functions
 # Set ShouldProcess to $true to enable the capability to use -WhatIf and -Confirm
 [CmdletBinding(
-    SupportsShouldProcess=$true,
-    DefaultParameterSetName='Clear'
+    SupportsShouldProcess = $true,
+    DefaultParameterSetName = 'Clear'
 )]
 
-Param (
+param (
     # Create the Clear parameter and set metadata
     # It is its own param set and should not be used with any other param combos
     [Parameter(
-        Mandatory=$true,
-        ParameterSetName="Clear"
+        Mandatory = $true,
+        ParameterSetName = 'Clear'
     )]
     [Switch]$Clear,
 
     # Create the Owner parameter and set metadata
     [Parameter(
-        Mandatory=$false,
-        Position=0,
-        ValueFromPipelineByPropertyName=$true,
-        ParameterSetName='Set-Data'
+        Mandatory = $false,
+        Position = 0,
+        ValueFromPipelineByPropertyName = $true,
+        ParameterSetName = 'Set-Data'
     )]
     [ValidateNotNullOrEmpty()]
     [System.String]$Owner,
 
     # Create the Organization parameter and set metadata
     [Parameter(
-        Mandatory=$false,
-        Position=1,
-        ValueFromPipelineByPropertyName=$true,
-        ParameterSetName='Set-Data'
+        Mandatory = $false,
+        Position = 1,
+        ValueFromPipelineByPropertyName = $true,
+        ParameterSetName = 'Set-Data'
     )]
     [ValidateNotNullOrEmpty()]
     [System.String]$Organization,
 
     # Validate that the computer(s) is/are accessible
-    [ValidateScript({Test-Connection -ComputerName $_ -Quiet})]
+    [ValidateScript({ Test-Connection -ComputerName $_ -Quiet })]
     # Ensure that the data is not empty
     [ValidateNotNullOrEmpty()]
     [Parameter(
-        Mandatory=$false,
-        ValueFromPipelineByPropertyName=$true
+        Mandatory = $false,
+        ValueFromPipelineByPropertyName = $true
     )]
     [System.String[]]$ComputerName
 )
@@ -217,46 +217,46 @@ function Set-NTRegistration {
     # Cmdlet bind the script to enable advanced functions
     # Set ShouldProcess to $true to enable the capability to use -WhatIf and -Confirm
     [CmdletBinding(
-        SupportsShouldProcess=$true,
-        DefaultParameterSetName='Clear'
+        SupportsShouldProcess = $true,
+        DefaultParameterSetName = 'Clear'
     )]
 
-    Param (
+    param (
         # Create the Clear parameter and set metadata
         # It is its own param set and should not be used with any other param combos
         [Parameter(
-            Mandatory=$true,
-            ParameterSetName="Clear"
+            Mandatory = $true,
+            ParameterSetName = 'Clear'
         )]
         [Switch]$Clear,
 
         # Create the Owner parameter and set metadata
         [Parameter(
-            Mandatory=$false,
-            Position=0,
-            ValueFromPipelineByPropertyName=$true,
-            ParameterSetName='Set-Data'
+            Mandatory = $false,
+            Position = 0,
+            ValueFromPipelineByPropertyName = $true,
+            ParameterSetName = 'Set-Data'
         )]
         [ValidateNotNullOrEmpty()]
         [System.String]$Owner,
 
         # Create the Organization parameter and set metadata
         [Parameter(
-            Mandatory=$false,
-            Position=1,
-            ValueFromPipelineByPropertyName=$true,
-            ParameterSetName='Set-Data'
+            Mandatory = $false,
+            Position = 1,
+            ValueFromPipelineByPropertyName = $true,
+            ParameterSetName = 'Set-Data'
         )]
         [ValidateNotNullOrEmpty()]
         [System.String]$Organization,
 
         # Validate that the computer(s) is/are accessible
-        [ValidateScript({Test-Connection -ComputerName $_ -Quiet})]
+        [ValidateScript({ Test-Connection -ComputerName $_ -Quiet })]
         # Ensure that the data is not empty
         [ValidateNotNullOrEmpty()]
         [Parameter(
-            Mandatory=$false,
-            ValueFromPipelineByPropertyName=$true
+            Mandatory = $false,
+            ValueFromPipelineByPropertyName = $true
         )]
         [System.String[]]$ComputerName
     )
@@ -265,32 +265,32 @@ function Set-NTRegistration {
     begin {
 
         # Write information to console
-        Write-Verbose -Message "Running initialization"
+        Write-Verbose -Message 'Running initialization'
 
         # Write debugging info
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - Parameter info:"
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$Clear: $Clear"
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$Owner: $Owner"
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$Organization: $Organization"
-        foreach ($Computer in $ComputerName) {Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$ComputerName: $Computer"}
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - Parameter info:"
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$Clear: $Clear"
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$Owner: $Owner"
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$Organization: $Organization"
+        foreach ($Computer in $ComputerName) { Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$ComputerName: $Computer" }
         
         # Create the script block for remote execution, this stores the code to be executed remotely
         $ScriptBlock = {
             # Accept parameter values
             param(
                 # Only two different strings are allowed for the name parameter
-                [ValidateSet("RegisteredOwner", "RegisteredOrganization")]
+                [ValidateSet('RegisteredOwner', 'RegisteredOrganization')]
                 [System.String]$Name,
                 # The value can have anything, as long as it is a string, if value is specified, it cannot be empty
-                [System.String]$Value = ""
+                [System.String]$Value = ''
             )
 
             # Set the registry value for the system registration information
-            Set-ItemProperty -Name $Name -Value $Value -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\"            
+            Set-ItemProperty -Name $Name -Value $Value -Path 'HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\'            
         }
 
         # Write debugging info
-        Write-Debug -Message "$(Get-Date -Format "HH:mm:ss") - `$ScriptBlock: $($ScriptBlock.ToString())"
+        Write-Debug -Message "$(Get-Date -Format 'HH:mm:ss') - `$ScriptBlock: $($ScriptBlock.ToString())"
     }
 
     # Run the end block once after pipeline completes
@@ -324,24 +324,24 @@ function Set-NTRegistration {
         # If the owner parameter is specified, build the params
         if ($Owner) {
             # Add the registered owner string to the param list in array form
-            $OwnerParams.ArgumentList = @("RegisteredOwner")
+            $OwnerParams.ArgumentList = @('RegisteredOwner')
 
             # Add the owner registration value to the list of arguments for the script block
             $OwnerParams.ArgumentList += $Owner
 
             # implement -WhatIf and -Confirm support (Should process)s
-            if ($PSCmdlet.ShouldProcess("Registry", "Change owner")) {
+            if ($PSCmdlet.ShouldProcess('Registry', 'Change owner')) {
                 # Parameter splat (use @ instead of $ for HashTable) the cmdlet with dynamically built parameters
                 Invoke-Command @OwnerParams
 
-                Write-Verbose -Message "Set owner registration"
+                Write-Verbose -Message 'Set owner registration'
             }
         }
 
         # Check to see if the Organization parameter is specified
         if ($Organization) {
             # Add the registered organization string to the param list in array form
-            $OrganizationParams.ArgumentList = @("RegisteredOrganization")
+            $OrganizationParams.ArgumentList = @('RegisteredOrganization')
 
             # Add the organization registration value to the list of arguments for the script block
             $OrganizationParams.ArgumentList += $Organization
@@ -350,19 +350,19 @@ function Set-NTRegistration {
             $OrganizationParams | Out-String | Write-Debug
 
             # implement -WhatIf and -Confirm support (Should process)
-            if ($PSCmdlet.ShouldProcess("Registry", "Change organization")) {
+            if ($PSCmdlet.ShouldProcess('Registry', 'Change organization')) {
                 # Parameter splat (use @ instead of $ for HashTable) the cmdlet with dynamically built parameters
                 Invoke-Command @OrganizationParams
 
-                Write-Verbose -Message "Set organization registration"
+                Write-Verbose -Message 'Set organization registration'
             }
-        # If the clear parameter is specified, remove the registration.
-        # Only if the Organization and Owner parameters are not specified, the organization check is implied via elseif
+            # If the clear parameter is specified, remove the registration.
+            # Only if the Organization and Owner parameters are not specified, the organization check is implied via elseif
         } elseif ($Clear -and (-not $Owner)) {
             # implement -WhatIf and -Confirm support (Should process)
-            if ($PSCmdlet.ShouldProcess("Registry", "Clear Owner Registration")) {
+            if ($PSCmdlet.ShouldProcess('Registry', 'Clear Owner Registration')) {
                 # Set the clear parameters to Owner mode
-                $ClearParams.ArgumentList = "RegisteredOwner"
+                $ClearParams.ArgumentList = 'RegisteredOwner'
 
                 # Write debug info
                 $ClearParams | Out-String | Write-Debug
@@ -370,12 +370,12 @@ function Set-NTRegistration {
                 # Execute the clear command against owner
                 Invoke-Command @ClearParams
 
-                Write-Verbose -Message "Cleared Owner Registration"
+                Write-Verbose -Message 'Cleared Owner Registration'
             }
             # implement -WhatIf and -Confirm support (Should process)
-            if ($PSCmdlet.ShouldProcess("Registry", "Clear Organization Registration")) {
+            if ($PSCmdlet.ShouldProcess('Registry', 'Clear Organization Registration')) {
                 # Set the clear parameters to Owner mode
-                $ClearParams.ArgumentList = "RegisteredOrganization"
+                $ClearParams.ArgumentList = 'RegisteredOrganization'
 
                 # Write debug info
                 $ClearParams | Out-String | Write-Debug
@@ -383,14 +383,14 @@ function Set-NTRegistration {
                 # Execute the clear command against organization
                 Invoke-Command @ClearParams
 
-                Write-Verbose -Message "Cleared Organization Registration"
+                Write-Verbose -Message 'Cleared Organization Registration'
             }            
         }
     }
 }
 
 # Execute script as standalone if not dot-sourced
-if ($MyInvocation.Line -NotMatch "^\.\s") {
+if ($MyInvocation.Line -notmatch '^\.\s') {
     # Param splat the parameters
     Set-NTRegistration @PSBoundParameters
 }

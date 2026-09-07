@@ -24,30 +24,30 @@
 
 #Requires -Module Hyper-V
 
-[CmdletBinding(SupportsShouldProcess=$true)]
+[CmdletBinding(SupportsShouldProcess = $true)]
 
 param(
-    [ValidateScript({Test-Path -Path ".\$_.zip" -PathType "Leaf"})]
-    [System.String]$ZipName = "Enterprise"
+    [ValidateScript({ Test-Path -Path ".\$_.zip" -PathType 'Leaf' })]
+    [System.String]$ZipName = 'Enterprise'
 )
 
 # Extract the Archive to the local folder to prep for install.
-Expand-Archive -Path ".\$ZipName.zip" -DestinationPath ".\"
+Expand-Archive -Path ".\$ZipName.zip" -DestinationPath '.\'
 
 # Ensure that the specified path exists before executing the import command
-if (Test-Path -Path ".\$ZipName\" -PathType "Container") {
+if (Test-Path -Path ".\$ZipName\" -PathType 'Container') {
     # Import the VM and files to the local hyper-v instance while generating a new unique ID
     Import-VM -Path ".\$ZipName\" -Copy -GenerateNewId
 } else {
     # Throw an error stating that the stuff isn't there
-    Write-Error -Message "The specified path does not exist during import, ensure that the VM name and the folder in the zip are of the same name."
+    Write-Error -Message 'The specified path does not exist during import, ensure that the VM name and the folder in the zip are of the same name.'
 }
 
 # Ensure that the path is present before placing the uninstall script
-if (-not (Test-Path -Path "C:\ProgramData\PSDoodads\NonPrivVM\" -PathType "Container")) {
+if (-not (Test-Path -Path 'C:\ProgramData\PSDoodads\NonPrivVM\' -PathType 'Container')) {
     # Create the folder if it doesn't exist.
-    New-Item -Path "C:\ProgramData\PSDoodads\NonPrivVM\" -ItemType "Directory"
+    New-Item -Path 'C:\ProgramData\PSDoodads\NonPrivVM\' -ItemType 'Directory'
 }
 
 # Place the uninstaller in a centrally available location
-Copy-Item -Path ".\Uninstall-NonPrivVM.ps1" -Destination "C:\ProgramData\PSDoodads\NonPrivVM\"
+Copy-Item -Path '.\Uninstall-NonPrivVM.ps1' -Destination 'C:\ProgramData\PSDoodads\NonPrivVM\'
